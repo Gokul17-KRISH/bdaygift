@@ -377,10 +377,14 @@ function pop(kind){
 let soundOn = true;
 const bgAudio = document.getElementById('bgMusic');
 const soundBtn = document.getElementById('sound');
+const SONG_START_TIME = 83; // "Darling, just hold my hand..."
 
 function playMusic() {
-  if (bgAudio && bgAudio.paused) {
-    bgAudio.play().catch(() => {});
+  if (bgAudio) {
+    if (bgAudio.paused || bgAudio.currentTime < 5) {
+      try { bgAudio.currentTime = SONG_START_TIME; } catch(e) {}
+      bgAudio.play().catch(() => {});
+    }
   }
 }
 
