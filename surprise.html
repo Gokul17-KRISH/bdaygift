@@ -249,7 +249,8 @@ h1.big{
   </section>
 
   <div class="stepdots" id="dots"></div>
-  <button class="sound" id="sound" aria-label="toggle sound">🔊</button>
+  <button class="sound" id="sound" aria-label="toggle sound">🎵</button>
+  <audio id="bgMusic" loop src="song.mp3"></audio>
 </div>
 <div class="burst" id="burst" aria-hidden="true"></div>
 
@@ -372,11 +373,29 @@ function pop(kind){
   }
 }
 
-/* ---- gentle sound ---- */
-let soundOn=true, actx;
-document.getElementById('sound').addEventListener('click',function(){
-  soundOn=!soundOn; this.textContent=soundOn?'🔊':'🔇';
+/* ---- gentle sound & background song ---- */
+let soundOn = true;
+const bgAudio = document.getElementById('bgMusic');
+const soundBtn = document.getElementById('sound');
+
+function playMusic() {
+  if (bgAudio && bgAudio.paused) {
+    bgAudio.play().catch(() => {});
+  }
+}
+
+soundBtn.addEventListener('click', function() {
+  soundOn = !soundOn;
+  if (soundOn) {
+    this.textContent = '🎵';
+    playMusic();
+  } else {
+    this.textContent = '🔇';
+    if (bgAudio) bgAudio.pause();
+  }
 });
+
+let actx;
 function tone(freqs){
   if(!soundOn) return;
   try{
@@ -391,8 +410,12 @@ function tone(freqs){
     });
   }catch(e){}
 }
-function blip(){tone([523.25,659.25])}
+function blip(){
+  playMusic();
+  tone([523.25,659.25]);
+}
 function onEnter(name){
+  playMusic();
   if(name==='bday'){pop('party'); tone([523.25,659.25,783.99]);}
   if(name==='final'){pop('hearts'); tone([659.25,783.99,987.77,1318.5]);}
 }
